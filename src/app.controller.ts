@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, ParseArrayPipe, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -6,7 +6,13 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Query('requireFields', ParseArrayPipe) requireFields: string[]) {
+    return this.appService.getDataFromAirtable(requireFields);
+  }
+
+  @Post()
+  async createDataToAirtable() {
+    const createResult = await this.appService.addDataToAirtable();
+    return createResult;
   }
 }
